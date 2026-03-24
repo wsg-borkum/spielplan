@@ -90,7 +90,7 @@
 
     async function load(sub) {
         try {
-            const r = await fetch(`https://familieschmidt.biz/borkum/proxy.php?url=` + encodeURIComponent(`https://${sub}.tischtennislive.de/export/Tischtennis/iCal.aspx?Typ=Verein&ID=864&Runde=2&Hallenplan=False`));
+            const r = await fetch(`https://familieschmidt.biz/borkum/proxy.php?url=` + encodeURIComponent(`https://pinneberg.tischtennislive.de/export/Tischtennis/iCal.aspx?Typ=Verein&ID=864&Runde=${sub}&Hallenplan=False`));
             const t = await r.text();
             const jcal = ICAL.parse(t);
             
@@ -193,8 +193,8 @@
         });
     });
 
-    load('pinneberg');
-    load('bezirk3');
+    load('1');
+    load('2');
 </script>
 
 </body>
