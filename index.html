@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WSG BorKum Spielplan</title>
+    <meta name="robots" content="noindex, nofollow">
+	<title>WSG BorKum Spielplan</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.5.0/ical.min.js"></script>
 
@@ -15,8 +16,8 @@
             --home-color: #28a745;
             --away-color: #dc3545;
         }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f4f7f9; margin: 0; padding: 10px; color: #333; }
-        .container { max-width: 800px; margin: 0 auto; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f4f7f9; margin: 0; padding: 10px; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
+        .container { max-width: 800px; margin: 0 auto; flex: 1; width: 100%; }
         
         .filter-area { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .filter-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
@@ -65,6 +66,27 @@
             border-radius: 6px; font-size: 0.75em; font-weight: bold; transition: 0.2s;
         }
         .pdf-btn:hover { background: #a71d2a; }
+
+        /* Footer Style */
+        .site-footer {
+            margin-top: 40px;
+            padding: 15px 0;
+            border-top: 1px solid #dee2e6;
+            text-align: center;
+        }
+        .footer-btn {
+            text-decoration: none;
+            color: #777;
+            font-size: 0.75em;
+            margin: 0 10px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+        .footer-btn:hover {
+            background: #e9ecef;
+            color: var(--borkum-blue);
+        }
     </style>
 </head>
 <body>
@@ -88,6 +110,10 @@
     </div>
 
     <div id="game-list"></div>
+
+    <footer class="site-footer">
+        <a href="impressum.html" class="footer-btn">Impressum und Datenschutz</a>
+    </footer>
 </div>
 
 <script>
@@ -199,6 +225,10 @@
             `;
             list.appendChild(card);
         });
+        
+        if (filtered.length === 0) {
+            list.innerHTML = '<p style="text-align:center; padding:20px; color:#888;">Keine Spiele gefunden.</p>';
+        }
     }
 
     document.querySelectorAll('.btn').forEach(b => {
