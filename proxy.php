@@ -1,4 +1,25 @@
 <?php
+
+// Ziel-URL aus dem Parameter holen
+$targetUrl = isset($_GET['url']) ? $_GET['url'] : '';
+
+// --- OPTIMIERTE LOG-LOGIK (Filtert Doppelzählungen) ---
+// Wir loggen nur, wenn die Anfrage für "Runde 1" reinkommt.
+// Da index.html immer 1 und 2 lädt, haben wir so exakt 1 Logeintrag pro Seitenaufruf.
+if (strpos($targetUrl, 'Runde=1') !== false) {
+    $totalFile = 'gesamtzahl.log';
+    $logFile   = 'aufrufe_details.log';
+
+    // Gesamtzahl aktualisieren
+    $count = file_exists($totalFile) ? (int)file_get_contents($totalFile) : 0;
+    file_put_contents($totalFile, $count + 1);
+
+    // Zeitstempel im CSV-Format (Datum;Uhrzeit)
+    $logEntry = date('d.m.Y;H:i:s') . "\n"; 
+    file_put_contents($logFile, $logEntry, FILE_APPEND);
+}
+// --- LOG-LOGIK ENDE ---
+
 // Erlaubt den Zugriff (CORS), falls du später doch GitHub Pages nutzen willst
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: text/calendar; charset=utf-8");
