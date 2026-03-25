@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WSG Borkum Spielplan</title>
+    <meta name="robots" content="noindex, nofollow">
+    <title>WSG BorKum Spielplan</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.5.0/ical.min.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
 
@@ -55,6 +58,13 @@
 
         #game-list { display: flex; flex-direction: column; gap: 8px; }
 
+        /* Status-Meldung für leere Filterergebnisse */
+        #status-msg {
+            text-align: center; padding: 40px 20px; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted);
+            display: none;
+        }
+
         .date-label {
             font-size: 0.75rem; font-weight: 900; color: var(--text-dark);
             text-transform: uppercase; letter-spacing: 0.1em;
@@ -67,23 +77,13 @@
             border: 1px solid var(--text-dark);
             position: relative;
             padding: 8px 12px 8px 22px; 
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
+            display: flex; flex-direction: column; gap: 2px;
         }
 
         .side-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; }
+        .teams-text { font-size: 1.1rem; font-weight: 900; line-height: 1.1; }
+        .league-text { font-size: 0.7rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
 
-        .teams-text {
-            font-size: 1.1rem; font-weight: 900; line-height: 1.1;
-        }
-
-        .league-text { 
-            font-size: 0.7rem; color: var(--text-muted); 
-            font-weight: 700; text-transform: uppercase; 
-        }
-
-        /* Zeile 3: Tags, Uhrzeit & PDF Rechts */
         .meta-row {
             display: flex; align-items: center; justify-content: space-between;
             margin-top: 2px; flex-wrap: nowrap;
@@ -112,7 +112,6 @@
             white-space: nowrap;
         }
 
-        /* Zeile 4: Adresse */
         .address-row {
             font-size: 0.75rem; border-top: 1px solid var(--border-ui);
             padding-top: 4px; margin-top: 2px;
@@ -122,7 +121,6 @@
 
         @media (max-width: 500px) {
             .meta-row { flex-wrap: wrap; gap: 8px; }
-            .pdf-btn { order: 2; }
         }
     </style>
 </head>
@@ -148,10 +146,11 @@
         </div>
     </div>
 
+    <div id="status-msg">Keine Spiele gefunden.</div>
     <div id="game-list"></div>
 
     <footer style="margin: 40px 0; text-align: center; border-top: 1px solid var(--border-ui); padding-top: 15px;">
-        <a href="impressum.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">Impressum & Datenschutz</a>
+        <a href="impressum.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">Info & Datenschutz</a>
     </footer>
 </div>
 
@@ -159,12 +158,14 @@
     let filters = { time: 'future', cat: 'all', loc: 'all' };
     let allEvents = [];
     let seenEvents = new Set();
+    let loadedCount = 0;
 
     async function load(sub) {
         try {
             const r = await fetch(`https://familieschmidt.biz/borkum/proxy.php?url=` + encodeURIComponent(`https://pinneberg.tischtennislive.de/export/Tischtennis/iCal.aspx?Typ=Verein&ID=864&Runde=${sub}&Hallenplan=False`));
             const t = await r.text();
             const jcal = ICAL.parse(t);
+            
             new ICAL.Component(jcal).getAllSubcomponents('vevent').forEach(v => {
                 const e = new ICAL.Event(v);
                 let startDate = e.startDate.toJSDate();
@@ -192,12 +193,19 @@
                     });
                 }
             });
-            render();
-        } catch (err) { console.error(err); }
+        } catch (err) { 
+            console.error(err); 
+        } finally {
+            loadedCount++;
+            if (loadedCount >= 2) {
+                render();
+            }
+        }
     }
 
     function render() {
         const list = document.getElementById('game-list');
+        const status = document.getElementById('status-msg');
         list.innerHTML = '';
         const now = new Date().getTime();
 
@@ -210,6 +218,12 @@
             if (filters.loc === 'away' && ev.isHome) return false;
             return true;
         });
+
+        if (filtered.length === 0) {
+            status.style.display = 'block';
+        } else {
+            status.style.display = 'none';
+        }
 
         filtered.sort((a, b) => filters.time === 'past' ? b.ts - a.ts : a.ts - b.ts);
 
