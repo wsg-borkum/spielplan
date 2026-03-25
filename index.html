@@ -3,87 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-	<title>WSG BorKum Spielplan</title>
+    <title>WSG BorKum Spielplan</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.5.0/ical.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+
         :root {
-            --borkum-blue: #004a99;
-            --youth-color: #ffc107;
-            --adult-color: #17a2b8;
-            --home-color: #28a745;
-            --away-color: #dc3545;
+            --bg-light: #f1f3f5;
+            --card-white: #ffffff;
+            --text-dark: #1a1c1e;
+            --text-muted: #6c757d;
+            --border-ui: #dee2e6;
+            --color-home: #008450;
+            --color-away: #d11210;
+            --color-youth: #f59e0b;
+            --color-adult: #004a99;
+            --color-pdf-bg: #f8f9fa;
         }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f4f7f9; margin: 0; padding: 10px; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
-        .container { max-width: 800px; margin: 0 auto; flex: 1; width: 100%; }    
-        .filter-area { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .filter-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-        .btn { 
-            padding: 8px 16px; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; 
-            background: white; font-size: 0.85em; font-weight: 600; transition: 0.2s; color: #555;
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            margin: 0; padding: 15px;
+            -webkit-font-smoothing: antialiased;
         }
-        .btn.active { background: var(--borkum-blue); color: white; border-color: var(--borkum-blue); }
-        #game-list { display: flex; flex-direction: column; gap: 12px; }
-        .date-header { 
-            padding: 8px 15px; background: #e9ecef; border-radius: 6px; 
-            font-weight: 800; font-size: 0.9em; color: #495057; margin-top: 10px;
+
+        .container { max-width: 700px; margin: 0 auto; }
+
+        .page-title {
+            font-size: 1.5rem; font-weight: 900; text-transform: uppercase;
+            margin-bottom: 20px; border-left: 8px solid var(--color-adult);
+            padding-left: 12px; line-height: 1.1;
         }
-        .game-card { 
-            background: #fff; padding: 15px; border-radius: 10px; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 5px solid #ddd;
+
+        .filter-nav {
+            margin-bottom: 20px; background: var(--card-white);
+            border: 2px solid var(--text-dark);
         }
-        .game-card.home { border-left-color: var(--home-color); }
-        .game-card.away { border-left-color: var(--away-color); }
-        .game-title { font-size: 1.1em; font-weight: 700; color: #222; margin-bottom: 2px; display: block; line-height: 1.2; }
-        .game-league { font-size: 0.85em; color: #666; font-weight: 400; display: block; margin-bottom: 8px; }
-        .game-meta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 0.9em; }
-        .tag { 
-            padding: 3px 8px; border-radius: 4px; font-size: 0.75em; 
-            color: white; font-weight: 800; text-transform: uppercase;
+
+        .filter-row { display: flex; border-bottom: 1px solid var(--border-ui); }
+        .filter-row:last-child { border-bottom: none; }
+
+        .btn {
+            flex: 1; background: var(--card-white); border: none;
+            color: var(--text-muted); padding: 10px 5px; font-size: 0.7rem;
+            font-weight: 700; cursor: pointer; text-transform: uppercase;
+            border-right: 1px solid var(--border-ui);
         }
-        .tag-youth { background: var(--youth-color); color: #000; }
-        .tag-adult { background: var(--adult-color); }
-        .tag-home { color: var(--home-color); border: 1px solid var(--home-color); background: #fff; }
-        .tag-away { color: var(--away-color); border: 1px solid var(--away-color); background: #fff; }
-        .time-box { font-weight: bold; color: #333; }
-        .loc-link { color: #004a99; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+        .btn.active { background: var(--text-dark); color: white; }
+
+        #game-list { display: flex; flex-direction: column; gap: 8px; }
+
+        .date-label {
+            font-size: 0.75rem; font-weight: 900; color: var(--text-dark);
+            text-transform: uppercase; letter-spacing: 0.1em;
+            border-bottom: 2px solid var(--text-dark);
+            padding-bottom: 2px; margin: 15px 0 5px 0;
+        }
+
+        .game-box {
+            background: var(--card-white);
+            border: 1px solid var(--text-dark);
+            position: relative;
+            padding: 8px 12px 8px 22px; 
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .side-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; }
+
+        .teams-text {
+            font-size: 1.1rem; font-weight: 900; line-height: 1.1;
+        }
+
+        .league-text { 
+            font-size: 0.7rem; color: var(--text-muted); 
+            font-weight: 700; text-transform: uppercase; 
+        }
+
+        /* Zeile 3: Tags, Uhrzeit & PDF Rechts */
+        .meta-row {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-top: 2px; flex-wrap: nowrap;
+        }
+        
+        .meta-left { display: flex; align-items: center; gap: 6px; }
+
+        .badge {
+            font-size: 0.55rem; font-weight: 900; padding: 1px 5px; 
+            border: 1.5px solid currentColor; text-transform: uppercase;
+        }
+        .badge-y { color: var(--color-youth); }
+        .badge-a { color: var(--color-adult); }
+        .badge-h { color: var(--color-home); }
+        .badge-w { color: var(--color-away); }
+
+        .time-val { 
+            font-weight: 900; font-family: monospace; font-size: 0.85rem;
+            margin-left: 4px; color: var(--text-dark);
+        }
+
+        .pdf-btn {
+            text-decoration: none; background: var(--color-pdf-bg);
+            color: var(--text-dark); padding: 2px 6px; font-size: 0.6rem; 
+            font-weight: 800; text-transform: uppercase; border: 1px solid var(--border-ui);
+            white-space: nowrap;
+        }
+
+        /* Zeile 4: Adresse */
+        .address-row {
+            font-size: 0.75rem; border-top: 1px solid var(--border-ui);
+            padding-top: 4px; margin-top: 2px;
+        }
+        .loc-link { color: var(--text-dark); text-decoration: none; font-weight: 500; display: block; }
         .loc-link:hover { text-decoration: underline; }
 
-        /* PDF Button Style */
-        .pdf-btn {
-            text-decoration: none; background: #dc3545; color: white; padding: 3px 10px; 
-            border-radius: 6px; font-size: 0.75em; font-weight: bold; transition: 0.2s;
-        }
-        .pdf-btn:hover { background: #a71d2a; }
-
-        /* Footer Style */
-        .site-footer {
-            margin-top: 40px;
-            padding: 15px 0;
-            border-top: 1px solid #dee2e6;
-            text-align: center;
-        }
-        .footer-btn {
-            text-decoration: none;
-            color: #777;
-            font-size: 0.75em;
-            margin: 0 10px;
-            padding: 5px 10px;
-            border-radius: 4px;
-            transition: 0.2s;
-        }
-        .footer-btn:hover {
-            background: #e9ecef;
-            color: var(--borkum-blue);
+        @media (max-width: 500px) {
+            .meta-row { flex-wrap: wrap; gap: 8px; }
+            .pdf-btn { order: 2; }
         }
     </style>
 </head>
 <body>
+
 <div class="container">
-    <div class="filter-area">
+    <h1 class="page-title">WSG Borkum<br>Spielplan</h1>
+
+    <div class="filter-nav">
         <div class="filter-row" id="timeF">
-            <button class="btn active" data-f="future">Anstehende Spiele</button>
-            <button class="btn" data-f="past">Vergangene Spiele</button>
+            <button class="btn active" data-f="future">Anstehend</button>
+            <button class="btn" data-f="past">Vergangen</button>
         </div>
         <div class="filter-row" id="catF">
             <button class="btn active" data-f="all">Alle Teams</button>
@@ -91,16 +142,19 @@
             <button class="btn" data-f="youth">Jugend</button>
         </div>
         <div class="filter-row" id="locF">
-            <button class="btn active" data-f="all">Alle Orte</button>
+            <button class="btn active" data-f="all">Gesamt</button>
             <button class="btn" data-f="home">Heim</button>
             <button class="btn" data-f="away">Auswärts</button>
         </div>
     </div>
+
     <div id="game-list"></div>
-    <footer class="site-footer">
-        <a href="impressum.html" class="footer-btn">Impressum und Datenschutz</a>
+
+    <footer style="margin: 40px 0; text-align: center; border-top: 1px solid var(--border-ui); padding-top: 15px;">
+        <a href="impressum.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">Impressum & Datenschutz</a>
     </footer>
 </div>
+
 <script>
     let filters = { time: 'future', cat: 'all', loc: 'all' };
     let allEvents = [];
@@ -111,37 +165,26 @@
             const r = await fetch(`https://familieschmidt.biz/borkum/proxy.php?url=` + encodeURIComponent(`https://pinneberg.tischtennislive.de/export/Tischtennis/iCal.aspx?Typ=Verein&ID=864&Runde=${sub}&Hallenplan=False`));
             const t = await r.text();
             const jcal = ICAL.parse(t);
-            
             new ICAL.Component(jcal).getAllSubcomponents('vevent').forEach(v => {
                 const e = new ICAL.Event(v);
                 let startDate = e.startDate.toJSDate();
                 const rawTitle = e.summary;
                 const eventKey = `${rawTitle}_${startDate.getTime()}`;
-
+                
                 if (!seenEvents.has(eventKey)) {
                     seenEvents.add(eventKey);
-                    
-                    // SpielID aus UID extrahieren (letzter Teil nach dem Unterstrich)
                     const uid = v.getFirstPropertyValue('uid') || "";
-                    const uidParts = uid.split('_');
-                    const gameId = uidParts.length > 0 ? uidParts[uidParts.length - 1] : null;
-
-                    let teamPart = rawTitle;
-                    let leaguePart = "";
-                    const splitIdx = rawTitle.lastIndexOf('(');
-                    if (splitIdx !== -1) {
-                        teamPart = rawTitle.substring(0, splitIdx).trim();
-                        leaguePart = rawTitle.substring(splitIdx).replace(/[()]/g, '').trim();
-                    }
-
+                    const gameId = uid.split('_').pop();
+                    let [teams, league] = rawTitle.split('(');
+                    league = league ? league.replace(')', '') : "Spiel";
                     const isY = /Jungen|Mädchen|Schüler|Jugend|J1|J15|J19/i.test(rawTitle);
                     const isH = rawTitle.toLowerCase().trim().startsWith("wsg borkum");
-
+                    
                     allEvents.push({
-                        teams: teamPart,
-                        league: leaguePart,
+                        teams: teams.trim(),
+                        league: league.trim().replace('),', '').replace(')', ''),
                         start: startDate,
-                        location: e.location || "Keine Adresse hinterlegt",
+                        location: e.location || "Ort unbekannt",
                         isYouth: isY,
                         isHome: isH,
                         ts: startDate.getTime(),
@@ -150,7 +193,7 @@
                 }
             });
             render();
-        } catch (err) { console.error("Fehler:", err); }
+        } catch (err) { console.error(err); }
     }
 
     function render() {
@@ -172,65 +215,52 @@
 
         let lastDate = "";
         filtered.forEach(ev => {
-            const dateStr = ev.start.toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' });
-            
+            const dateStr = ev.start.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
             if (dateStr !== lastDate) {
-                const header = document.createElement('div');
-                header.className = 'date-header';
-                header.innerText = dateStr;
-                list.appendChild(header);
+                const day = document.createElement('div');
+                day.className = 'date-label';
+                day.innerText = dateStr;
+                list.appendChild(day);
                 lastDate = dateStr;
             }
 
             const timeStr = ev.start.toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
-            const typeTag = ev.isYouth ? '<span class="tag tag-youth">Jugend</span>' : '<span class="tag tag-adult">Erwachsene</span>';
-            const locTag = ev.isHome ? '<span class="tag tag-home">Heim</span>' : '<span class="tag tag-away">Auswärts</span>';
             const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ev.location)}`;
-
-            // PDF-Button nur für vergangene Spiele mit gültiger ID
-            let pdfLinkHtml = "";
-            if (filters.time === 'past' && ev.gameId) {
-                const pdfUrl = `https://pinneberg.tischtennislive.de/export/default.aspx?SportArt=96&Format=PDF&Area=Spielbericht&SpielID=${ev.gameId}`;
-                pdfLinkHtml = `<a href="${pdfUrl}" target="_blank" class="pdf-btn">Bericht (PDF)</a>`;
-            }
+            const pdfUrl = `https://pinneberg.tischtennislive.de/export/default.aspx?SportArt=96&Format=PDF&Area=Spielbericht&SpielID=${ev.gameId}`;
 
             const card = document.createElement('div');
-            card.className = `game-card ${ev.isHome ? 'home' : 'away'}`;
+            card.className = 'game-box';
             card.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <span class="game-title">${ev.teams}</span>
-                    ${pdfLinkHtml}
+                <div class="side-bar" style="background:${ev.isHome ? 'var(--color-home)' : 'var(--color-away)'}"></div>
+                <div class="teams-text">${ev.teams}</div>
+                <div class="league-text">${ev.league}</div>
+                <div class="meta-row">
+                    <div class="meta-left">
+                        <span class="badge ${ev.isYouth ? 'badge-y' : 'badge-a'}">${ev.isYouth ? 'Jugend' : 'Erwachsene'}</span>
+                        <span class="badge ${ev.isHome ? 'badge-h' : 'badge-w'}">${ev.isHome ? 'Heim' : 'Auswärts'}</span>
+                        <span class="time-val">${timeStr} Uhr</span>
+                    </div>
+                    ${filters.time === 'past' && ev.gameId ? `<a href="${pdfUrl}" target="_blank" class="pdf-btn">Spielbericht (PDF)</a>` : ''}
                 </div>
-                <span class="game-league">${ev.league}</span>
-                <div class="game-meta">
-                    ${typeTag} ${locTag}
-                    <span class="time-box">${timeStr} Uhr</span>
+                <div class="address-row">
                     <a href="${mapsUrl}" target="_blank" class="loc-link">📍 ${ev.location}</a>
                 </div>
             `;
             list.appendChild(card);
         });
-        
-        if (filtered.length === 0) {
-            list.innerHTML = '<p style="text-align:center; padding:20px; color:#888;">Keine Spiele gefunden.</p>';
-        }
     }
 
     document.querySelectorAll('.btn').forEach(b => {
         b.addEventListener('click', function() {
             this.parentElement.querySelectorAll('.btn').forEach(x => x.classList.remove('active'));
             this.classList.add('active');
-            const rowId = this.parentElement.id;
-            const val = this.dataset.f;
-            if(rowId === 'timeF') filters.time = val;
-            if(rowId === 'catF') filters.cat = val;
-            if(rowId === 'locF') filters.loc = val;
+            filters[this.parentElement.id.replace('F','')] = this.dataset.f;
             render();
         });
     });
 
-    load('1');
-    load('2');
+    load('1'); load('2');
 </script>
+
 </body>
 </html>
