@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>WSG BorKum Spielplan</title>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.5.0/ical.min.js"></script>
-
+    <title>Info & Datenschutz - WSG Borkum Spielplan</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
 
@@ -17,264 +14,130 @@
             --text-dark: #1a1c1e;
             --text-muted: #6c757d;
             --border-ui: #dee2e6;
-            --color-home: #008450;
-            --color-away: #d11210;
-            --color-youth: #f59e0b;
-            --color-adult: #004a99;
-            --color-pdf-bg: #f8f9fa;
+            --color-accent: #004a99; /* Erwachsenen-Blau */
         }
 
         body { 
             font-family: 'Inter', sans-serif; 
             background-color: var(--bg-light);
             color: var(--text-dark);
-            margin: 0; padding: 15px;
+            margin: 0; padding: 20px;
+            line-height: 1.5;
             -webkit-font-smoothing: antialiased;
         }
 
         .container { max-width: 700px; margin: 0 auto; }
 
-        .page-title {
-            font-size: 1.5rem; font-weight: 900; text-transform: uppercase;
-            margin-bottom: 20px; border-left: 8px solid var(--color-adult);
-            padding-left: 12px; line-height: 1.1;
-        }
-
-        .filter-nav {
-            margin-bottom: 20px; background: var(--card-white);
-            border: 2px solid var(--text-dark);
-        }
-
-        .filter-row { display: flex; border-bottom: 1px solid var(--border-ui); }
-        .filter-row:last-child { border-bottom: none; }
-
-        .btn {
-            flex: 1; background: var(--card-white); border: none;
-            color: var(--text-muted); padding: 10px 5px; font-size: 0.7rem;
-            font-weight: 700; cursor: pointer; text-transform: uppercase;
-            border-right: 1px solid var(--border-ui);
-        }
-        .btn.active { background: var(--text-dark); color: white; }
-
-        #game-list { display: flex; flex-direction: column; gap: 8px; }
-
-        /* Status-Meldung für leere Filterergebnisse */
-        #status-msg {
-            text-align: center; padding: 40px 20px; font-weight: 900;
-            text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted);
-            display: none;
-        }
-
-        .date-label {
-            font-size: 0.75rem; font-weight: 900; color: var(--text-dark);
-            text-transform: uppercase; letter-spacing: 0.1em;
-            border-bottom: 2px solid var(--text-dark);
-            padding-bottom: 2px; margin: 15px 0 5px 0;
-        }
-
-        .game-box {
+        /* Zurück-Button im Stil der Filter-Buttons */
+        .back-link {
+            display: inline-block;
+            text-decoration: none;
             background: var(--card-white);
-            border: 1px solid var(--text-dark);
-            position: relative;
-            padding: 8px 12px 8px 22px; 
-            display: flex; flex-direction: column; gap: 2px;
+            color: var(--text-dark);
+            border: 2px solid var(--text-dark);
+            padding: 10px 18px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 25px;
+            transition: all 0.2s;
+        }
+        .back-link:hover {
+            background: var(--text-dark);
+            color: white;
         }
 
-        .side-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; }
-        .teams-text { font-size: 1.1rem; font-weight: 900; line-height: 1.1; }
-        .league-text { font-size: 0.7rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
-
-        .meta-row {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-top: 2px; flex-wrap: nowrap;
-        }
-        
-        .meta-left { display: flex; align-items: center; gap: 6px; }
-
-        .badge {
-            font-size: 0.55rem; font-weight: 900; padding: 1px 5px; 
-            border: 1.5px solid currentColor; text-transform: uppercase;
-        }
-        .badge-y { color: var(--color-youth); }
-        .badge-a { color: var(--color-adult); }
-        .badge-h { color: var(--color-home); }
-        .badge-w { color: var(--color-away); }
-
-        .time-val { 
-            font-weight: 900; font-family: monospace; font-size: 0.85rem;
-            margin-left: 4px; color: var(--text-dark);
+        .content-box {
+            background: var(--card-white);
+            border: 2px solid var(--text-dark);
+            padding: 30px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
         }
 
-        .pdf-btn {
-            text-decoration: none; background: var(--color-pdf-bg);
-            color: var(--text-dark); padding: 2px 6px; font-size: 0.6rem; 
-            font-weight: 800; text-transform: uppercase; border: 1px solid var(--border-ui);
-            white-space: nowrap;
+        h1 {
+            font-size: 1.6rem; font-weight: 900; text-transform: uppercase;
+            margin: 0 0 20px 0; border-left: 10px solid var(--color-accent);
+            padding-left: 15px; line-height: 1.1;
+            letter-spacing: -0.02em;
         }
 
-        .address-row {
-            font-size: 0.75rem; border-top: 1px solid var(--border-ui);
-            padding-top: 4px; margin-top: 2px;
+        h2 {
+            font-size: 1rem; font-weight: 900; text-transform: uppercase;
+            margin: 30px 0 12px 0; color: var(--text-dark);
+            border-bottom: 2px solid var(--text-dark);
+            padding-bottom: 4px;
         }
-        .loc-link { color: var(--text-dark); text-decoration: none; font-weight: 500; display: block; }
-        .loc-link:hover { text-decoration: underline; }
+
+        p, ul { margin: 12px 0; font-size: 0.95rem; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; }
+
+        /* Info-Boxen */
+        .box {
+            background: var(--bg-light);
+            padding: 15px;
+            border: 1px solid var(--border-ui);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .note {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px dotted var(--border-ui);
+            padding-top: 15px;
+            margin-top: 20px;
+        }
+
+        /* E-Mail Schutz */
+        .reverse {
+            display: inline-block;
+            direction: rtl;
+            unicode-bidi: bidi-override;
+            color: var(--color-accent);
+            font-weight: 700;
+        }
+
+        strong { font-weight: 800; }
 
         @media (max-width: 500px) {
-            .meta-row { flex-wrap: wrap; gap: 8px; }
+            .content-box { padding: 20px; }
+            h1 { font-size: 1.3rem; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1 class="page-title">WSG Borkum<br>Spielplan</h1>
+    <a href="index.html" class="back-link">← Zurück zum Spielplan</a>
 
-    <div class="filter-nav">
-        <div class="filter-row" id="timeF">
-            <button class="btn active" data-f="future">Anstehend</button>
-            <button class="btn" data-f="past">Vergangen</button>
+    <div class="content-box">
+        <h1>Info & Datenschutz</h1>
+
+        <div class="box">
+            <strong>Privates Projekt:</strong> Dies ist ein privates, nicht-kommerzielles Hobby-Projekt zur Anzeige des Spielplans. Die WSG Borkum ist nicht Betreiber dieser Webseite. Die Daten werden automatisiert von den öffentlichen Kalender-Schnittstellen von TischtennisLive bezogen.
         </div>
-        <div class="filter-row" id="catF">
-            <button class="btn active" data-f="all">Alle Teams</button>
-            <button class="btn" data-f="adult">Erwachsene</button>
-            <button class="btn" data-f="youth">Jugend</button>
+
+        <h2>Kontakt / Verantwortlich</h2>
+        <p>
+            <strong>Stefan Schmidt</strong><br>
+            E-Mail: <span class="reverse">zib.tdimhcseilimaf@edoc</span>
+        </p>
+
+        <div class="note">
+            <strong>Transparenzhinweis:</strong> Da dies ein rein privates Projekt ohne Gewinnerzielungsabsicht ist, verzichte ich zum Schutz meiner Privatsphäre auf die Angabe meiner vollständigen Anschrift im Netz. Bei berechtigtem Interesse bin ich jederzeit über die E-Mail-Adresse erreichbar.
         </div>
-        <div class="filter-row" id="locF">
-            <button class="btn active" data-f="all">Gesamt</button>
-            <button class="btn" data-f="home">Heim</button>
-            <button class="btn" data-f="away">Auswärts</button>
-        </div>
+
+        <h2>Datenschutz (Kurzfassung)</h2>
+        <p>Diese Seite dient rein der Anzeige von Spieldaten.</p>
+        <ul>
+            <li><strong>Server-Logs:</strong> Beim Aufruf werden technisch bedingt Daten (IP-Adresse, Browsertyp) an den Hoster übertragen. Dies ist für den Betrieb notwendig.</li>
+            <li><strong>Cookies:</strong> Diese Seite verwendet keine Cookies und keine Analyse-Tools.</li>
+            <li><strong>Externe Daten:</strong> Die Spieldaten werden über einen privaten Proxy-Server geladen. Es findet keine direkte Übertragung von Nutzerdaten an Dritte statt.</li>
+        </ul>
     </div>
-
-    <div id="status-msg">Keine Spiele gefunden.</div>
-    <div id="game-list"></div>
-
-    <footer style="margin: 40px 0; text-align: center; border-top: 1px solid var(--border-ui); padding-top: 15px;">
-        <a href="impressum.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">Info & Datenschutz</a>
-    </footer>
 </div>
-
-<script>
-    let filters = { time: 'future', cat: 'all', loc: 'all' };
-    let allEvents = [];
-    let seenEvents = new Set();
-    let loadedCount = 0;
-
-    async function load(sub) {
-        try {
-            const r = await fetch(`https://familieschmidt.biz/borkum/proxy.php?url=` + encodeURIComponent(`https://pinneberg.tischtennislive.de/export/Tischtennis/iCal.aspx?Typ=Verein&ID=864&Runde=${sub}&Hallenplan=False`));
-            const t = await r.text();
-            const jcal = ICAL.parse(t);
-            
-            new ICAL.Component(jcal).getAllSubcomponents('vevent').forEach(v => {
-                const e = new ICAL.Event(v);
-                let startDate = e.startDate.toJSDate();
-                const rawTitle = e.summary;
-                const eventKey = `${rawTitle}_${startDate.getTime()}`;
-                
-                if (!seenEvents.has(eventKey)) {
-                    seenEvents.add(eventKey);
-                    const uid = v.getFirstPropertyValue('uid') || "";
-                    const gameId = uid.split('_').pop();
-                    let [teams, league] = rawTitle.split('(');
-                    league = league ? league.replace(')', '') : "Spiel";
-                    const isY = /Jungen|Mädchen|Schüler|Jugend|J1|J15|J19/i.test(rawTitle);
-                    const isH = rawTitle.toLowerCase().trim().startsWith("wsg borkum");
-                    
-                    allEvents.push({
-                        teams: teams.trim(),
-                        league: league.trim().replace('),', '').replace(')', ''),
-                        start: startDate,
-                        location: e.location || "Ort unbekannt",
-                        isYouth: isY,
-                        isHome: isH,
-                        ts: startDate.getTime(),
-                        gameId: gameId
-                    });
-                }
-            });
-        } catch (err) { 
-            console.error(err); 
-        } finally {
-            loadedCount++;
-            if (loadedCount >= 2) {
-                render();
-            }
-        }
-    }
-
-    function render() {
-        const list = document.getElementById('game-list');
-        const status = document.getElementById('status-msg');
-        list.innerHTML = '';
-        const now = new Date().getTime();
-
-        let filtered = allEvents.filter(ev => {
-            if (filters.time === 'future' && ev.ts < now) return false;
-            if (filters.time === 'past' && ev.ts > now) return false;
-            if (filters.cat === 'adult' && ev.isYouth) return false;
-            if (filters.cat === 'youth' && !ev.isYouth) return false;
-            if (filters.loc === 'home' && !ev.isHome) return false;
-            if (filters.loc === 'away' && ev.isHome) return false;
-            return true;
-        });
-
-        if (filtered.length === 0) {
-            status.style.display = 'block';
-        } else {
-            status.style.display = 'none';
-        }
-
-        filtered.sort((a, b) => filters.time === 'past' ? b.ts - a.ts : a.ts - b.ts);
-
-        let lastDate = "";
-        filtered.forEach(ev => {
-            const dateStr = ev.start.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
-            if (dateStr !== lastDate) {
-                const day = document.createElement('div');
-                day.className = 'date-label';
-                day.innerText = dateStr;
-                list.appendChild(day);
-                lastDate = dateStr;
-            }
-
-            const timeStr = ev.start.toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
-            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ev.location)}`;
-            const pdfUrl = `https://pinneberg.tischtennislive.de/export/default.aspx?SportArt=96&Format=PDF&Area=Spielbericht&SpielID=${ev.gameId}`;
-
-            const card = document.createElement('div');
-            card.className = 'game-box';
-            card.innerHTML = `
-                <div class="side-bar" style="background:${ev.isHome ? 'var(--color-home)' : 'var(--color-away)'}"></div>
-                <div class="teams-text">${ev.teams}</div>
-                <div class="league-text">${ev.league}</div>
-                <div class="meta-row">
-                    <div class="meta-left">
-                        <span class="badge ${ev.isYouth ? 'badge-y' : 'badge-a'}">${ev.isYouth ? 'Jugend' : 'Erwachsene'}</span>
-                        <span class="badge ${ev.isHome ? 'badge-h' : 'badge-w'}">${ev.isHome ? 'Heim' : 'Auswärts'}</span>
-                        <span class="time-val">${timeStr} Uhr</span>
-                    </div>
-                    ${filters.time === 'past' && ev.gameId ? `<a href="${pdfUrl}" target="_blank" class="pdf-btn">Spielbericht (PDF)</a>` : ''}
-                </div>
-                <div class="address-row">
-                    <a href="${mapsUrl}" target="_blank" class="loc-link">📍 ${ev.location}</a>
-                </div>
-            `;
-            list.appendChild(card);
-        });
-    }
-
-    document.querySelectorAll('.btn').forEach(b => {
-        b.addEventListener('click', function() {
-            this.parentElement.querySelectorAll('.btn').forEach(x => x.classList.remove('active'));
-            this.classList.add('active');
-            filters[this.parentElement.id.replace('F','')] = this.dataset.f;
-            render();
-        });
-    });
-
-    load('1'); load('2');
-</script>
 
 </body>
 </html>
