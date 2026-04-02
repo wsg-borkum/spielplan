@@ -226,7 +226,8 @@
                 list.appendChild(day);
                 lastDate = dateStr;
             }
-            const timeStr = ev.start.toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
+            const timeStr = ev.start.toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit',
+timeZone: 'Europe/Berlin'});
             const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ev.location)}`;
             const pdfUrl = `https://pinneberg.tischtennislive.de/export/default.aspx?SportArt=96&Format=PDF&Area=Spielbericht&SpielID=${ev.gameId}`;
             const card = document.createElement('div');
